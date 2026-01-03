@@ -330,7 +330,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <!-- Optional bell audio: place a file named ring.mp3 beside index.html or update src below -->
-    <audio id="ring-sound" src="ring.mp3" preload="auto"></audio>
+    <audio id="ring-sound" src="/ring.mp3" preload="auto"></audio>
 
     <script>
         // --- COUNTDOWN LOGIC ---
@@ -425,8 +425,16 @@
         }
 
         if (clockImg) {
-            clockImg.addEventListener("mouseenter", playRing);
-            clockImg.addEventListener("click", playRing); // tap/click fallback on mobile
+            clockImg.addEventListener("mouseenter", playRing); // may be blocked on some browsers
+            ["click", "pointerdown", "touchstart"].forEach(evt => {
+                clockImg.addEventListener(evt, playRing);
+            });
+        }
+
+        if (ringSound) {
+            ringSound.addEventListener("error", () => {
+                console.warn("Ring sound failed to load. Ensure /public/ring.mp3 exists on Vercel.");
+            });
         }
     </script>
 </body>
